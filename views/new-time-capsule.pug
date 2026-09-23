@@ -1,0 +1,24 @@
+doctype html
+html
+    head
+        title= title
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        link(rel="stylesheet" href="/css/style.css")
+    body
+        main.form-wrapper
+            h1 Add a Time Capsule
+
+            form(action="/time-capsules" method="post")
+                label(for="name") Name
+                input#name(type="text" name="name" required)
+
+                label(for="location") Location
+                input#location(type="text" name="location" required)
+
+                label(for="open_year") Open year
+                input#open_year(type="number" name="open_year" min="2026" step="1" required)
+
+                input(type="submit" value="Create time capsule")
+
+            p.actions
+                a(href="/") Back to all time capsules

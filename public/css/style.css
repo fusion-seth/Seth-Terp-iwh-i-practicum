@@ -10,6 +10,20 @@ h1 {
     margin: 1rem;
 }
 
+.actions,
+.empty-state {
+    margin: 1rem;
+}
+
+.button {
+    display: inline-block;
+    padding: .5rem 1rem;
+    color: white;
+    background: #0b8484;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
 .cards {
     display: flex;
     align-items: center;
@@ -46,7 +60,8 @@ label, input {
     font-size: inherit;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="number"] {
     padding: .25rem;
 }
 

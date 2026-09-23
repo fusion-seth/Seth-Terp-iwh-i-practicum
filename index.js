@@ -11,17 +11,70 @@ app.use(express.json());
 // * Please DO NOT INCLUDE the private app access token in your repo. Don't do this practicum in your normal account.
 const PRIVATE_APP_ACCESS = process.env.PRIVATE_APP_ACCESS;
 
+if (!PRIVATE_APP_ACCESS) {
+    throw new Error('PRIVATE_APP_ACCESS is missing. Add it to your local .env file.');
+}
+
+const CUSTOM_OBJECT_TYPE = '2-268888408';
+
+const hubspotHeaders = {
+    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+    'Content-Type': 'application/json'
+};
+
 // TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data. Pass this data along to the front-end and create a new pug template in the views folder.
 
 // * Code for Route 1 goes here
+
+app.get('/', async (req, res) => {
+    const url = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}?properties=name,location,open_year&limit=100`;
+
+    try {
+        const response = await axios.get(url, { headers: hubspotHeaders });
+        const data = response.data.results;
+
+        res.render('index', {
+            title: 'Time Capsules | HubSpot APIs',
+            data
+        });
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+        res.status(500).send('Unable to load time capsules.');
+    }
+});
 
 // TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data. Send this data along in the next route.
 
 // * Code for Route 2 goes here
 
+app.get('/new-time-capsule', (req, res) => {
+    res.render('new-time-capsule', {
+        title: 'Add a Time Capsule | HubSpot APIs'
+    });
+});
+
 // TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data. Once executed, redirect the user to the homepage.
 
 // * Code for Route 3 goes here
+
+app.post('/time-capsules', async (req, res) => {
+    const url = `https://api.hubapi.com/crm/v3/objects/${CUSTOM_OBJECT_TYPE}`;
+    const payload = {
+        properties: {
+            name: req.body.name,
+            location: req.body.location,
+            open_year: req.body.open_year
+        }
+    };
+
+    try {
+        await axios.post(url, payload, { headers: hubspotHeaders });
+        res.redirect('/');
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+        res.status(500).send('Unable to create the time capsule.');
+    }
+});
 
 /** 
 * * This is sample code to give you a reference for how you should structure your calls. 
